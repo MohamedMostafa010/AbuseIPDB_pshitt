@@ -62,7 +62,7 @@ Disabling SSH Service in the Entire System (Optional, if you do not need SSH for
 If you installed from source, go into the source directory and run (You can change the specified port '22', and also captured credentials file name and path)::
 
   chmod +x modifiedpshitt.py
-  sudo ./modifiedpshitt.py -p 22 -o /home/azureuser/credentials.json
+  sudo ./pshitt.py -p 22 -o /home/azureuser/credentials.json
 
 This will run a fake SSH server listening on **port 22**, capturing authentication  
 data sent by attackers. Each login attempt is logged in JSON format,  
@@ -99,7 +99,7 @@ including AbuseIPDB results ::
 
 Full options are available via '-h' option ::
 
- usage: modifiedpshitt [-h] [-o OUTPUT] [-k KEY] [-l LOG] [-p PORT] [-t THREADS] [-v] [-D] [-a API_KEY]
+ usage: pshitt [-h] [-o OUTPUT] [-k KEY] [-l LOG] [-p PORT] [-t THREADS] [-v] [-D] [-a API_KEY]
  
  Passwords of SSH Intruders Transferred to Text
  
