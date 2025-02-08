@@ -2,6 +2,14 @@
 PSHITT
 ======
 
+Note: Forked Version with AbuseIPDB Integration
+============
+
+This repository is a fork of the original [pshitt](https://github.com/regit/pshitt) project.  
+It extends the functionality by integrating with [AbuseIPDB](https://www.abuseipdb.com/)  
+to check the reputation of attacker's IP addresses before logging credentials.  
+This enhancement provides additional insights into potential threats.
+
 Introduction
 ============
 
