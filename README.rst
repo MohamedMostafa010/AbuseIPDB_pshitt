@@ -61,7 +61,7 @@ Disabling SSH Service in the Entire System (Optional, if you do not need SSH for
 
 If you installed from source, go into the source directory and run (You can change the specified port '22', and also captured credentials file name and path)::
 
-  chmod +x modifiedpshitt.py
+  chmod +x pshitt.py
   sudo ./pshitt.py -p 22 -o /home/azureuser/credentials.json
 
 This will run a fake SSH server listening on **port 22**, capturing authentication  
