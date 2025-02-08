@@ -1,8 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
+Forked from the original pshitt repository to integrate AbuseIPDB for enhanced 
+threat intelligence. This version allows checking the attacker's IP reputation 
+before logging credentials.
+
 Copyright(C) 2014-2020, Eric Leblond
 Written by Eric Leblond <eric@regit.org>
-
 
 Software based on demo_server.py example provided in paramiko
 Copyright (C) 2003-2007  Robey Pointer <robeypointer@gmail.com>
@@ -31,6 +34,7 @@ import socket
 import sys
 import threading
 import traceback
+import requests  # Add this import for API requests
 # third party dependencies
 import paramiko
 import daemon
@@ -69,11 +73,42 @@ class Server(paramiko.ServerInterface):
         data['mac'] = self.transport.remote_mac
         data['try'] = self.count
         self.count += 1
+
+        # Query AbuseIPDB for the source IP
+        abuse_data = self.query_abuseipdb(data['src_ip'])
+        if abuse_data:
+            data['abuseipdb'] = abuse_data
+
         logging.debug("%s:%d tried username '%s' with '%s'" %
                       (self.addr, self.port, username, password))
         self.logfile.write(json.dumps(data) + '\n')
         self.logfile.flush()
         return paramiko.AUTH_FAILED
+
+    def query_abuseipdb(self, ip_address):
+        """Query AbuseIPDB API for information about the IP address."""
+        api_key = "8462921832be82bb3c97860d202eb1c615c1597f6ba43e6ffcdf303f9d3ff7a29dbd7e3e77b9996e"  # Hardcoded API key, you can change it later.
+        if not api_key:
+            logging.warning("AbuseIPDB API key not found. Skipping AbuseIPDB lookup.")
+            return None
+
+        url = "https://api.abuseipdb.com/api/v2/check"
+        params = {
+            'ipAddress': ip_address,
+            'maxAgeInDays': '90'
+        }
+        headers = {
+            'Key': api_key,
+            'Accept': 'application/json'
+        }
+
+        try:
+            response = requests.get(url, headers=headers, params=params)
+            response.raise_for_status()
+            return response.json().get('data', {})
+        except requests.exceptions.RequestException as e:
+            logging.error(f"Failed to query AbuseIPDB: {e}")
+            return None
 
     def check_auth_publickey(self, username, key):
         logging.debug(b'Auth attempt with key: ' +
